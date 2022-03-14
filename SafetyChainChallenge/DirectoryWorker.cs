@@ -18,26 +18,71 @@ namespace SafetyChainChallenge
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            Console.WriteLine("Directory path?");
+            var path = Console.ReadLine();
+
+            if (path == null)
+            {
+                Console.WriteLine("Please add a path");
+            }
+            else if (!Directory.Exists(path))
+            {
+                Console.WriteLine("Folder does not exist");
+            }
+
+            Console.WriteLine("Output path?");
+            var output = Console.ReadLine();
+
+
+
             while (!stoppingToken.IsCancellationRequested)
             {
-                var result = GetDirectory();
-                Console.WriteLine(result);
+                try
+                {
+                    var result = GetDirectory(path);
+                    Console.WriteLine(result);
 
-                StreamWriter sw = new StreamWriter("C:\\ChallengeFolder\\Test.txt");
+                    if (result == null)
+                    {
+                        Console.WriteLine("Could not read input file");
+                    }
+                    else
+                    {
+                        var outputDirectory = Path.GetDirectoryName(output);
+                        if (!Directory.Exists(outputDirectory))
+                        {
+                            Directory.CreateDirectory(Path.GetDirectoryName(output));
+                        }
 
-                await sw.WriteAsync(result);
+                        StreamWriter sw = new StreamWriter(output);
+                        await sw.WriteAsync(result);
 
-                sw.Close();
+                        sw.Close();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Couldn't create output file");
+                }
 
-                await Task.Delay(1000, stoppingToken);
+                Console.WriteLine("Press any key to close the app");
+                Console.ReadKey();
+                await Task.Delay(100, stoppingToken);
             }
         }
 
-        public string GetDirectory()
+        public string GetDirectory(string path)
         {
-            StringBuilder sb = new StringBuilder();
-            _directoryService.GetDirectory("C:\\ChallengeFolder", ref sb);
-            return sb.ToString();
+            try
+            {
+                StringBuilder sb = new StringBuilder();
+                _directoryService.GetDirectory(path, ref sb);
+                return sb.ToString();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
     }
 }
