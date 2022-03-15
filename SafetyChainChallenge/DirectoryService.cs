@@ -35,6 +35,7 @@ namespace SafetyChainChallenge
                             {
                                 Dictionary<string, dynamic> dict = 
                                     item.ToObject<Dictionary<string, dynamic>>();
+
                                 var obj = string.Join(",", dict.Values);
                                 csvFile.AppendLine(obj);
                             }

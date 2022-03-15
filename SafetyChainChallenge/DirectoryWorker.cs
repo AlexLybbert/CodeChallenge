@@ -24,50 +24,55 @@ namespace SafetyChainChallenge
             if (path == null)
             {
                 Console.WriteLine("Please add a path");
+                path = Console.ReadLine();
             }
-            else if (!Directory.Exists(path))
+            
+            if (!Directory.Exists(path))
             {
                 Console.WriteLine("Folder does not exist");
-            }
 
-            Console.WriteLine("Output path?");
-            var output = Console.ReadLine();
-
-
-
-            while (!stoppingToken.IsCancellationRequested)
-            {
-                try
-                {
-                    var result = GetDirectory(path);
-                    Console.WriteLine(result);
-
-                    if (result == null)
-                    {
-                        Console.WriteLine("Could not read input file");
-                    }
-                    else
-                    {
-                        var outputDirectory = Path.GetDirectoryName(output);
-                        if (!Directory.Exists(outputDirectory))
-                        {
-                            Directory.CreateDirectory(Path.GetDirectoryName(output));
-                        }
-
-                        StreamWriter sw = new StreamWriter(output);
-                        await sw.WriteAsync(result);
-
-                        sw.Close();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Couldn't create output file");
-                }
-
-                Console.WriteLine("Press any key to close the app");
                 Console.ReadKey();
                 await Task.Delay(100, stoppingToken);
+            }
+            else
+            {
+                Console.WriteLine("Output path?");
+                var output = Console.ReadLine();
+
+                while (!stoppingToken.IsCancellationRequested)
+                {
+                    try
+                    {
+                        var result = GetDirectory(path);
+                        Console.WriteLine(result);
+
+                        if (result == null)
+                        {
+                            Console.WriteLine("Could not read input file");
+                        }
+                        else
+                        {
+                            var outputDirectory = Path.GetDirectoryName(output);
+                            if (!Directory.Exists(outputDirectory))
+                            {
+                                Directory.CreateDirectory(Path.GetDirectoryName(output));
+                            }
+
+                            StreamWriter sw = new StreamWriter(output);
+                            await sw.WriteAsync(result);
+
+                            sw.Close();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Couldn't create output file");
+                    }
+
+                    Console.WriteLine("Press any key to close the app");
+                    Console.ReadKey();
+                    await Task.Delay(100, stoppingToken);
+                }
             }
         }
 
